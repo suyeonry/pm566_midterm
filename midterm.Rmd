@@ -64,9 +64,9 @@ cln_inc <- na.omit(cln_inc)
 # trimming down (subsetting) the data because it is too big
 
 cln_inc <- cln_inc %>% group_by(CRUDE_RATE) %>%
-  slice(seq(1, n(), by = 100))
+  slice(seq(1, n(), by = 20))
 cln_mort <-  cln_mort %>% group_by(CRUDE_RATE) %>%
-  slice(seq(1, n(), by = 100))
+  slice(seq(1, n(), by = 20))
 
 # Trend of colon cancer incidence and mortality over the years (maybe line graph)
 
@@ -90,7 +90,7 @@ ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
 
 
 ```{r}
-# make new variable east versus west
+#EAST versus WEST
 
 #EAST will include New York, Pennsylvania, New Jersey, Virginia, North and South Carolina, Georgia
 #WEST will include Washington, Oregon, California
@@ -106,6 +106,33 @@ ggplot(us_map, aes(x=long, y=lat, group = group)) +
   geom_polygon(fill="mediumpurple", data = filter(us_map, region %in% west_states))+
   ggtitle("U.S Colon Cancer Comparison Covered Area East versus West")
 
+
+#make new variables for east and west states
+
+cln_inc$westeast <- ifelse(cln_inc$AREA == "New York"|cln_inc$AREA == "Pennsylvania"|cln_inc$AREA == "New Jersey"|cln_inc$AREA == "Virginia"|cln_inc$AREA == "North Carolina"|cln_inc$AREA == "South Carolina"|cln_inc$AREA == "Georgia", "East Coast",
+                           ifelse(cln_inc$AREA =="Washington"|cln_inc$AREA =="Oregon"|cln_inc$AREA == "California", "West Coast","Not Considered" ))
+
+
+
+
+
+
+p <- ggplot(data=cln_inc, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
+  theme_minimal()
+
+
+p
+a<-cln_inc[!(cln_inc$westeast=="Not Considered"),]
+a <- ggplot(data=a, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
+  theme_minimal()
+a
+```
+
+```{r}
 
 ```
 
