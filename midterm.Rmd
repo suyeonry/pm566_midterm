@@ -1,0 +1,113 @@
+---
+title: "Midterm"
+author: "Suyeon Ryu"
+date: '2020 10 5'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, eval=TRUE}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(dplyr)
+
+midt<- data.table::fread("C:/Users/suyeo/PM566/midterm/data/BYAREA.txt")
+
+head(midt)
+str(midt)
+summary(midt)
+
+cln <- midt[midt$SITE == "Colon and Rectum"]
+
+cln_mort <- cln[cln$EVENT_TYPE == "Mortality"]
+cln_inc <- cln[cln$EVENT_TYPE == "Incidence"]
+
+# Noticed some rates are still characters. In order to plot, need to change to numeric!
+
+cln_mort <- cln_mort %>% mutate(
+  CRUDE_RATE = as.numeric(CRUDE_RATE),
+  YEAR = as.numeric(YEAR)
+)
+
+
+cln_inc <- cln_inc %>% mutate(
+  CRUDE_RATE = as.numeric(CRUDE_RATE),
+  YEAR = as.numeric(YEAR)
+)
+
+
+# checking and removing missing values 
+cln_mort %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(is.na(.))))
+
+cln_inc %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(is.na(.))))
+
+cln_mort <- na.omit(cln_mort)
+cln_inc <- na.omit(cln_inc)
+
+
+
+
+```
+
+
+```{r, eval=TRUE}
+
+
+# trimming down (subsetting) the data because it is too big
+
+cln_inc <- cln_inc %>% group_by(CRUDE_RATE) %>%
+  slice(seq(1, n(), by = 100))
+cln_mort <-  cln_mort %>% group_by(CRUDE_RATE) %>%
+  slice(seq(1, n(), by = 100))
+
+# Trend of colon cancer incidence and mortality over the years (maybe line graph)
+
+ggplot(cln_mort, aes(x=YEAR, y=CRUDE_RATE))+
+  geom_point(color="red")+
+  theme_minimal()+
+  geom_smooth(method="loess", color="red", fill="darkred")+
+  ggtitle("U.S. Colon Cancer Mortality Crude Rate")
+
+
+ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
+  geom_point(color="blue")+
+  theme_minimal()+
+  geom_smooth(method="loess")+
+  ggtitle("U.S. Colon Cancer Incidence Crude Rate")
+
+
+
+```
+
+
+
+```{r}
+# make new variable east versus west
+
+#EAST will include New York, New Jersey, Virginia, North and South Carolina
+#WEST will include Washington, Oregon, California
+
+
+```
+
+
+
+```{r}
+# colon cancer trend in young people
+
+```
+
+
+```{r}
+# colon cancer comparison between west versus east , incidence rate, mortality rate
+
+```
+
