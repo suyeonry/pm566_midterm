@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, echo=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(data.table)
@@ -92,8 +92,19 @@ ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
 ```{r}
 # make new variable east versus west
 
-#EAST will include New York, New Jersey, Virginia, North and South Carolina
+#EAST will include New York, Pennsylvania, New Jersey, Virginia, North and South Carolina, Georgia
 #WEST will include Washington, Oregon, California
+
+us_map <- map_data("state")
+
+east_states <- c("new york", "pennsylvania","new jersey","virginia","north carolina","south carolina","georgia")
+west_states <- c("washington","oregon","california")
+
+ggplot(us_map, aes(x=long, y=lat, group = group)) +
+  geom_polygon(fill="grey", colour = "white") +
+  geom_polygon(fill="palevioletred1", data = filter(us_map, region %in% east_states)) +
+  geom_polygon(fill="mediumpurple", data = filter(us_map, region %in% west_states))+
+  ggtitle("U.S Colon Cancer Comparison Covered Area East versus West")
 
 
 ```
