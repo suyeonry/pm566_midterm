@@ -17,9 +17,7 @@ library(dplyr)
 
 midt<- data.table::fread("C:/Users/suyeo/PM566/midterm/data/BYAREA.txt")
 
-head(midt)
-str(midt)
-summary(midt)
+
 
 cln <- midt[midt$SITE == "Colon and Rectum"]
 
@@ -30,13 +28,15 @@ cln_inc <- cln[cln$EVENT_TYPE == "Incidence"]
 
 cln_mort <- cln_mort %>% mutate(
   CRUDE_RATE = as.numeric(CRUDE_RATE),
-  YEAR = as.numeric(YEAR)
+  YEAR = as.numeric(YEAR),
+  AGE_ADJUSTED_RATE = as.numeric(AGE_ADJUSTED_RATE),
 )
 
 
 cln_inc <- cln_inc %>% mutate(
   CRUDE_RATE = as.numeric(CRUDE_RATE),
-  YEAR = as.numeric(YEAR)
+  YEAR = as.numeric(YEAR),
+  AGE_ADJUSTED_RATE = as.numeric(AGE_ADJUSTED_RATE),
 )
 
 
@@ -57,6 +57,7 @@ cln_inc <- na.omit(cln_inc)
 
 ```
 
+# trimming down (subsetting) the data because it is too big
 
 ```{r, eval=TRUE}
 
@@ -88,7 +89,7 @@ ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
 ```
 
 
-
+# EAST versus WEST
 ```{r}
 #EAST versus WEST
 
@@ -116,36 +117,115 @@ cln_inc$westeast <- ifelse(cln_inc$AREA == "New York"|cln_inc$AREA == "Pennsylva
 
 
 
-
+#plotting bargraph of crude rate including "non considering area"
 p <- ggplot(data=cln_inc, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
   geom_bar(stat="identity", color="black", position=position_dodge())+
   scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
-  theme_minimal()
-
+  theme_minimal()+
+  ggtitle("U.S. Colon Cancer Incidence Crude Rate by Areas")
 
 p
-a<-cln_inc[!(cln_inc$westeast=="Not Considered"),]
-a <- ggplot(data=a, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
+
+#excluding not considered area from the data set
+
+cln3 <-cln_inc[!(cln_inc$westeast=="Not Considered"),]
+
+#plotting scatterplot of crude rate east versus west
+
+ggplot(data=cln3, aes(x=YEAR, y=CRUDE_RATE, color=westeast, shape=westeast)) +
+  geom_point() + 
+  geom_smooth(method=lm, se=TRUE, fullrange=TRUE)+
+  scale_shape_manual(values=c(3, 17))+ 
+  scale_color_manual(values=c("palevioletred1","mediumpurple"))+
+  scale_size_manual(values=c(7,7))+
+  theme(legend.position="right")+
+  ggtitle("U.S. Colon Cancer Incidence Crude Rate West Coast vs. East Coast")
+
+
+
+
+```
+
+
+
+# age adjusted 
+```{r}
+
+#removing outlier
+cln4 <- subset(cln3, cln3$AGE_ADJUSTED_RATE < 130)
+
+#plot 
+ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, fill=westeast))+
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  scale_fill_manual(values=c("palevioletred1","mediumpurple"))+
+  theme_minimal()
+
+ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westeast)) +
+  geom_point() + 
+  geom_smooth(method=lm, se=TRUE, fullrange=TRUE)+
+  scale_shape_manual(values=c(3, 17))+ 
+  scale_color_manual(values=c("palevioletred1","mediumpurple"))+
+  scale_size_manual(values=c(7,7))+
+  theme(legend.position="right")+
+  ggtitle("U.S. Colon Cancer AGE Adjusted Rate West Coast vs. East Coast")
+
+
+
+```
+
+
+
+
+
+```{r}
+# Do the same with mortality 
+
+
+
+cln_mort$westeast <- ifelse(cln_mort$AREA == "New York"|cln_mort$AREA == "Pennsylvania"|cln_mort$AREA == "New Jersey"|cln_mort$AREA == "Virginia"|cln_mort$AREA == "North Carolina"|cln_mort$AREA == "South Carolina"|cln_mort$AREA == "Georgia", "East Coast",
+                           ifelse(cln_mort$AREA =="Washington"|cln_mort$AREA =="Oregon"|cln_mort$AREA == "California", "West Coast","Not Considered" ))
+
+
+
+
+
+#plotting bargraph of crude rate including "non considering area"
+mort2 <- ggplot(data=cln_mort, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
   geom_bar(stat="identity", color="black", position=position_dodge())+
   scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
   theme_minimal()
-a
+
+mort2
+
+#excluding not considered area from the data set
+
+mort3 <-cln_mort[!(cln_mort$westeast=="Not Considered"),]
+
+#plotting scatterplot of crude rate east versus west
+
+
+ggplot(data=mort3, aes(x=YEAR, y=CRUDE_RATE, color=westeast, shape=westeast)) +
+  geom_point() + 
+  geom_smooth(method=lm, se=TRUE, fullrange=TRUE)+
+  scale_shape_manual(values=c(3, 17))+ 
+  scale_color_manual(values=c("palevioletred1","mediumpurple"))+
+  scale_size_manual(values=c(7,7))+
+  theme(legend.position="right")+
+  ggtitle("U.S. Colon Cancer Mortality Crude Rate West Coast vs. East Coast")
+
+
+
+ggplot(data=mort3, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westeast)) +
+  geom_point() + 
+  geom_smooth(method=lm, se=TRUE, fullrange=TRUE)+
+  scale_shape_manual(values=c(3, 17))+ 
+  scale_color_manual(values=c("palevioletred1","mediumpurple"))+
+  scale_size_manual(values=c(7,7))+
+  theme(legend.position="right")+
+  ggtitle("U.S. Colon Cancer AGE Adjusted Mortality Rate West Coast vs. East Coast")
+
+
+
 ```
 
-```{r}
-
-```
-
-
-
-```{r}
-# colon cancer trend in young people
-
-```
-
-
-```{r}
-# colon cancer comparison between west versus east , incidence rate, mortality rate
-
-```
 
