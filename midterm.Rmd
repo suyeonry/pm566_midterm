@@ -1,5 +1,5 @@
 ---
-title: "Midterm"
+title: "PM566 Midterm"
 author: "Suyeon Ryu"
 date: '2020 10 5'
 output: html_document
@@ -9,12 +9,14 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+# **Comparison in U.S. Colon Cancer Rates between East Coast and West Coast**
 
 # Introduction
 
 
-Colorectal cancer was known to have low incidence rate compared to other types of cancers in U.S.. However, in the recent years, it was discussed that the proportion of colon cancer in U.S. populations has increased, and the incidence and mortality were different from West Coast to East Coast, with unknown cause. This paper will discuss and compare the incidence and mortality rate of colon cancers in U.S. population. Specifically, 3 states representing West Coast are compared to 5 states which represent East Coast, through data exploration analyses.  
+Colorectal cancer was known to have low prevalence rates compared to other types of cancers in U.S. history. In the recent years, however, it was discussed that the proportion of colorectal cancer in U.S. populations has increased. More importantly and interestingly, the incidence and mortality are thought to be different from West Coast to East Coast with unknown causes. This paper will discuss and compare the incidence and mortality rates of colon cancers in U.S. population. Specifically, 3 states representing the West Coast are compared to 7 states representing the East Coast, through the data exploration analyses.  
+
+
 
 
 
@@ -23,10 +25,17 @@ Colorectal cancer was known to have low incidence rate compared to other types o
 ## Data Sources
 
 ### Cancer Incidence / Mortality Data 
-Data on cancer incidences/mortalities during 1999 through 2017 were obtained from the United States Cancer Statistics(USCS), the Centers for Disease Control and Prevention. As our focus is specifically colorectal cancers, all data for other cancers were omitted from the data set. Then, due to the limited computing power, the 1 in every 20 data was used to perform the data exploratory analysis. Any outliers were assessed from the scatter-plot, and was computationally removed from the data set for the further analyses. RStudio was used 
 
- 
-### Demographic characteristics 
+Data on cancer incidences/mortalities during 1999 through 2017 were obtained from the United States Cancer Statistics(USCS) data provided by the Centers for Disease Control and Prevention's National Center for Health Statistics(NCHS). As our focus is specifically colorectal cancers, all other data were omitted from the data set. Then, due to the limited computing power, the 1 in every 20 data was used to perform the data exploratory analysis using R version 3.6.0. Any outliers were assessed from the scatter-plot, and was computationally removed from the data set for the further analyses. No statistical computations were performed in this report.
+
+### Selection of West Coast and East Coast
+
+Based on the U.S. map, three reprensentative states that have coast line of Pacific ocean were chosen, which are California, Washington, and Oregon. With the same method, seven representative states that have coast line of Atlantic ocean were chosen, which are New York, Pennsylvania, NewJersey, Virginia, North and South Carolina, and Georgia. To diminish the possible bias coming from the latitutde, Florida was exlcuded. 
+
+
+### Demographic characteristics
+
+The data were collected from all sex, racial/ethnic groups, and age(all ages from <1 to 85+). The data collected for Incidence data from NPCR and SEER registries in 49 states cover approximately 98% of U.S. Population. For Mortality data, 100% of U.S. population was covered.  For purposes of brevity, in this report, only colon and rectum cancer related information is regarded. 
 
 
 
@@ -91,7 +100,8 @@ cln_mort <-  cln_mort %>% group_by(CRUDE_RATE) %>%
   slice(seq(1, n(), by = 20))
 ```
 
-```{r}
+```{r, echo=FALSE}
+
 range(cln_inc$YEAR)
 
 # Incidence rate table
@@ -131,7 +141,7 @@ rnames<-c('1999','2000','2001','2002','2003','2004','2005','2006','2007','2008',
 cnames <- c("YEAR","Median Rate","S.D.","Mean")
 
 inc_table <- cbind(rnames, inc_median, inc_std, inc_mean)
-inc_table <- knitr::kable(inc_table,row.names=FALSE, col.names=cnames,caption = "Table1. U.S. Colon Incidence Rate History",align = "cccc")
+inc_table <- knitr::kable(inc_table,row.names=FALSE, col.names=cnames,caption = "TABLE 1. U.S. Colon Cancer Incidence Rate History",align = "cccc")
 
 inc_table
 
@@ -142,7 +152,7 @@ inc_table
 
 
 
-```{r}
+```{r, echo=FALSE}
 
 ## Mortality Table 
 
@@ -181,7 +191,7 @@ rnames<-c('1999','2000','2001','2002','2003','2004','2005','2006','2007','2008',
 cnames <- c("YEAR","Median Rate","S.D.","Mean")
 
 mort_table <- cbind(rnames, mort_median, mort_std, mort_mean)
-mort_table <- knitr::kable(mort_table,row.names=FALSE, col.names=cnames,caption = "Table2. U.S. Colon Mortality Rate History",align = "cccc")
+mort_table <- knitr::kable(mort_table,row.names=FALSE, col.names=cnames,caption = "TABLE 2. U.S. Colon Cancer Mortality Rate History",align = "cccc")
 
 mort_table
 
@@ -190,24 +200,32 @@ mort_table
 
 
 
+
+
 # Preliminary Results 
 
-```{r, eval=TRUE,echo=FALSE}
+## Colorectal Cancer Incidence and Mortality Rates and Trends
+
+Overall, the trends in colorectal cancer incidence rate shows decreasing trend over the period of 18 years (1999 to 2017). The rate decreasing slope was steeper until early 2000, then shows stablizing trend from 2007 to 2017 (Figure 1). Regardless, the overall mortality from colon cancer in U.S. maintained around same rate over 17 years, without showing particularly decreasing trends (Figure 2). 
+
+
+```{r, eval=TRUE,echo=FALSE, warning=FALSE, message = FALSE}
 
 # Trend of colon cancer incidence and mortality over the years (maybe line graph)
-
-ggplot(cln_mort, aes(x=YEAR, y=CRUDE_RATE))+
-  geom_point(color="red")+
-  theme_minimal()+
-  geom_smooth(method="loess", color="red", fill="darkred")+
-  ggtitle("U.S. Colon Cancer Mortality Crude Rate")
-
 
 ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
   geom_point(color="blue")+
   theme_minimal()+
   geom_smooth(method="loess")+
-  ggtitle("U.S. Colon Cancer Incidence Crude Rate")
+  ggtitle("FIGURE 1.Overall U.S. Colon Cancer Incidence Crude Rate")
+
+ggplot(cln_mort, aes(x=YEAR, y=CRUDE_RATE))+
+  geom_point(color="red")+
+  theme_minimal()+
+  geom_smooth(method="loess", color="red", fill="darkred")+
+  ggtitle("FIGURE 2. Overall U.S. Colon Cancer Mortality Crude Rate")
+
+
 
 ```
 
@@ -216,8 +234,13 @@ ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
 
 
 
-# EAST versus WEST
-```{r}
+## Comparison of Colon Cancer Incidence Rates between EAST and WEST
+### Colorectal Cancer Incidence **Crude** Rates
+
+To ease the understanding of the geographical representation of each coast, the states which colon cancer data were collected from were highlighted (FIGURE 3). The bar graph of colorectal cancer incidence rates of each coast as well as the un-considered areas by year were plotted(FIGURE 4). Then, to aid the comparison of incidence rate over the years, the scatterplot of each coasts with regression lines were plotted (FIGURE 5). Based on the comparison scatterplot with regression lines, it is apparent that the incidence rates are decreasing over the years, but the rate of decreasing is slower for the West Coast compared to the East Coast. 
+
+
+```{r, echo=FALSE}
 #EAST versus WEST
 
 #EAST will include New York, Pennsylvania, New Jersey, Virginia, North and South Carolina, Georgia
@@ -232,7 +255,7 @@ ggplot(us_map, aes(x=long, y=lat, group = group)) +
   geom_polygon(fill="grey", colour = "white") +
   geom_polygon(fill="palevioletred1", data = filter(us_map, region %in% east_states)) +
   geom_polygon(fill="mediumpurple", data = filter(us_map, region %in% west_states))+
-  ggtitle("U.S Colon Cancer Comparison Covered Area East versus West")
+  ggtitle("FIGURE 3. U.S Colorectal Cancer Comparison Covered Area East versus West")
 
 
 #make new variables for east and west states
@@ -249,7 +272,7 @@ p <- ggplot(data=cln_inc, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
   geom_bar(stat="identity", color="black", position=position_dodge())+
   scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
   theme_minimal()+
-  ggtitle("U.S. Colon Cancer Incidence Crude Rate by Areas")
+  ggtitle("FIGURE 4. U.S. Colorectal Cancer Incidence Crude Rate by Areas")
 
 p
 
@@ -266,7 +289,7 @@ ggplot(data=cln3, aes(x=YEAR, y=CRUDE_RATE, color=westeast, shape=westeast)) +
   scale_color_manual(values=c("palevioletred1","mediumpurple"))+
   scale_size_manual(values=c(7,7))+
   theme(legend.position="right")+
-  ggtitle("U.S. Colon Cancer Incidence Crude Rate West Coast vs. East Coast")
+  ggtitle("FIGURE 5. U.S. Colon Cancer Incidence Crude Rate West Coast vs. East Coast")
 
 
 
@@ -275,17 +298,15 @@ ggplot(data=cln3, aes(x=YEAR, y=CRUDE_RATE, color=westeast, shape=westeast)) +
 
 
 
-# age adjusted 
-```{r}
+### Colorectal Cancer Incidence **Age-adjusted** Rates
+
+Because the data is covering fairly large spectrum of age(<1 to 85+), the age-adjusted data were used to plot the graphs of colorectal cancer incidence rates. The unconsidered areas were excluded from the data set. With the age-adjusted crude rate, not only the West Coast show the higher incidence rate over all years covered, but also it was more apparent that the incidence decreasing trend is significantly slower for the West Coast area (FIGURE 6).
+
+```{r,echo=FALSE, error=FALSE, message = FALSE}
 
 #removing outlier
 cln4 <- subset(cln3, cln3$AGE_ADJUSTED_RATE < 130)
 
-#plot 
-ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, fill=westeast))+
-  geom_bar(stat="identity", color="black", position=position_dodge())+
-  scale_fill_manual(values=c("palevioletred1","mediumpurple"))+
-  theme_minimal()
 
 ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westeast)) +
   geom_point() + 
@@ -294,7 +315,7 @@ ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westeas
   scale_color_manual(values=c("palevioletred1","mediumpurple"))+
   scale_size_manual(values=c(7,7))+
   theme(legend.position="right")+
-  ggtitle("U.S. Colon Cancer AGE Adjusted Rate West Coast vs. East Coast")
+  ggtitle("FIGURE 6. U.S. Colon Cancer AGE Adjusted Rate West Coast vs. East Coast")
 
 
 
@@ -303,8 +324,12 @@ ggplot(data=cln4, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westeas
 
 
 
+## Comparison of Colon Cancer Mortality Rates between EAST and WEST
+### Colorectal Cancer Mortality **Crude** Rates
 
-```{r}
+The U.S. colorectal cancer mortality rates were compared between West and East coasts through exploratory data analysis. From the regression line from the scatterplot(FIGURE 7), the slope of the West Coast mortality rate is positive; that is, the colon cancer mortality rate in the west coast area were increasing over the 17 years. East coast colorectal mortality rates show decreasing trend. Again, as the age range is big, the age-adjusted rates were compared to minimize potential bias within the data(FIGURE 8). With age-adjusted colorectal mortality data, both area's mortality rates show decreasing trends. However, the decreasing slopes are noticeably different; the West Coast decreasing trend is way slower. 
+
+```{r,echo=FALSE}
 # Do the same with mortality 
 
 
@@ -316,13 +341,7 @@ cln_mort$westeast <- ifelse(cln_mort$AREA == "New York"|cln_mort$AREA == "Pennsy
 
 
 
-#plotting bargraph of crude rate including "non considering area"
-mort2 <- ggplot(data=cln_mort, aes(x=YEAR, y=CRUDE_RATE, fill=westeast))+
-  geom_bar(stat="identity", color="black", position=position_dodge())+
-  scale_fill_manual(values=c("palevioletred1","#999999","mediumpurple"))+
-  theme_minimal()
 
-mort2
 
 #excluding not considered area from the data set
 
@@ -338,7 +357,7 @@ ggplot(data=mort3, aes(x=YEAR, y=CRUDE_RATE, color=westeast, shape=westeast)) +
   scale_color_manual(values=c("palevioletred1","mediumpurple"))+
   scale_size_manual(values=c(7,7))+
   theme(legend.position="right")+
-  ggtitle("U.S. Colon Cancer Mortality Crude Rate West Coast vs. East Coast")
+  ggtitle("FIGURE 7. U.S. Colon Cancer Mortality Crude Rate West Coast vs. East Coast")
 
 
 
@@ -349,10 +368,15 @@ ggplot(data=mort3, aes(x=YEAR, y=AGE_ADJUSTED_RATE, color=westeast, shape=westea
   scale_color_manual(values=c("palevioletred1","mediumpurple"))+
   scale_size_manual(values=c(7,7))+
   theme(legend.position="right")+
-  ggtitle("U.S. Colon Cancer AGE Adjusted Mortality Rate West Coast vs. East Coast")
+  ggtitle("FIGURE 8. U.S. Colon Cancer AGE Adjusted Mortality Rate West Coast vs. East Coast")
 
 
 
 ```
 
+
+
+# Conclusion
+
+In this paper, colorectal cancer incidence rates and mortality rates were compared in two opposite sides of U.S., West coast including 3 states facing Pacific ocean, and East coast including 7 states facing Atlantic ocean. Both rates were evidently decreasing over the 18 years covered by the dataset. However, the speed of decreasing is noticeably different between two areas, as suggested by many colorectal oncology surgeons. This finding may serve as the starting point of interesting pathway to researches intending to find the causes, and it may lead to potential preventive measure development for colorectal cancers.  
 
