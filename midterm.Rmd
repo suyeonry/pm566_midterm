@@ -9,14 +9,37 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, eval=TRUE, echo=FALSE}
+
+
+# Introduction
+
+
+Colorectal cancer was known to have low incidence rate compared to other types of cancers in U.S.. However, in the recent years, it was discussed that the proportion of colon cancer in U.S. populations has increased, and the incidence and mortality were different from West Coast to East Coast, with unknown cause. This paper will discuss and compare the incidence and mortality rate of colon cancers in U.S. population. Specifically, 3 states representing West Coast are compared to 5 states which represent East Coast, through data exploration analyses.  
+
+
+
+# Methods
+
+## Data Sources
+
+### Cancer Incidence / Mortality Data 
+Data on cancer incidences/mortalities during 1999 through 2017 were obtained from the United States Cancer Statistics(USCS), the Centers for Disease Control and Prevention. As our focus is specifically colorectal cancers, all data for other cancers were omitted from the data set. Then, due to the limited computing power, the 1 in every 20 data was used to perform the data exploratory analysis. Any outliers were assessed from the scatter-plot, and was computationally removed from the data set for the further analyses. RStudio was used 
+
+ 
+### Demographic characteristics 
+
+
+
+
+
+
+```{r,echo=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(data.table)
 library(dplyr)
 
 midt<- data.table::fread("C:/Users/suyeo/PM566/midterm/data/BYAREA.txt")
-
 
 
 cln <- midt[midt$SITE == "Colon and Rectum"]
@@ -54,12 +77,10 @@ cln_inc <- na.omit(cln_inc)
 
 
 
-
 ```
 
-# trimming down (subsetting) the data because it is too big
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, echo=FALSE}
 
 
 # trimming down (subsetting) the data because it is too big
@@ -68,6 +89,10 @@ cln_inc <- cln_inc %>% group_by(CRUDE_RATE) %>%
   slice(seq(1, n(), by = 20))
 cln_mort <-  cln_mort %>% group_by(CRUDE_RATE) %>%
   slice(seq(1, n(), by = 20))
+```
+
+
+```{r, eval=TRUE,echo=FALSE}
 
 # Trend of colon cancer incidence and mortality over the years (maybe line graph)
 
@@ -84,9 +109,11 @@ ggplot(cln_inc, aes(x=YEAR, y=CRUDE_RATE))+
   geom_smooth(method="loess")+
   ggtitle("U.S. Colon Cancer Incidence Crude Rate")
 
-
-
 ```
+
+
+
+
 
 
 # EAST versus WEST
